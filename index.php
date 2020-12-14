@@ -47,13 +47,30 @@ if (isset($_GET['q']) && preg_replace('/\s+/', '', $_GET['q']) != '') {
 	$stmt = $db->prepare($sql);
 	$stmt->execute($params);
 
-	$results = false;
+
+	$rows = array();
+	$scores = array();
 	while ($row = $stmt->fetch()) {
+		$score = 0;
+		foreach ($terms as $param)
+			$score = $score + substr_count($row['content'],$param);
+		array_push($scores, $score);
+		$row['score'] = $score;
+		array_push($rows, $row);
+	}
+	array_multisort($scores, SORT_DESC, $rows);
+
+	$results = false;
+	foreach ($rows as $row) {
 		$results = true;
+		if (substr($row['url'],-1,1)=='/')
+			continue
 ?>
 
 <div class='box'>
 <a href="<?php echo htmlspecialchars($row['url']); ?>"><?php echo htmlspecialchars($row['title']); ?></a>
+<br>
+<small>(score: <?php echo $row['score']; ?>) <?php echo htmlspecialchars($row['url']); ?></small>
 <br>
 ...<?php
 		$content = $row['content'];
