@@ -1,0 +1,65 @@
+
+body {
+background: #141415;
+font-family: 'Liberation Mono', monospace;
+color: #cdcdcd;
+}
+
+.preview, .box {
+padding: 10px;
+margin-top: 10px;
+background-color: #222;
+}
+
+.wrapper {
+max-width: 700px;
+margin: 0 auto;
+}
+
+a {
+color: #aac;
+}
+
+h1 a {
+text-decoration: none;
+color: #cdcdcd;
+}
+
+h1 a::before {
+content: "#";
+color: #aac;
+margin-right: 10px;
+}
+h1 a:hover::before {
+text-decoration: underline;
+}
+
+
+.preview h1 {
+margin: 0;
+padding: 0;
+margin-bottom: 5px;
+}
+
+
+.search-container input[type=text] {
+  padding: 6px;
+  margin-top: 3px;
+  font-size: 17px;
+  color: #cdcdcd;
+  background: #333;
+  border: 0;
+  width: calc(100% - 60px);
+}
+
+.search-container button {
+  padding: 6px 10px;
+  margin-top: 3px;
+  background: #333;
+  float: right;
+  font-size: 17px;
+  border: none;
+  cursor: pointer;
+  color:#cdcdcd;
+}
+

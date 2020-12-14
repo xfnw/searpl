@@ -1,0 +1,2 @@
+CREATE TABLE indexed (id INTEGER PRIMARY KEY, title VARCHAR(255), url VARCHAR(512), content TEXT)
+
