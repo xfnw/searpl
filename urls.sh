@@ -1,9 +1,15 @@
-wget --spider --force-html -r -l1 -H -U 'searplbot/1.0' $@ 2>&1 | tee wg
+wget --spider --force-html --tries 1 --timeout 1 -r -l1 -H -U 'searplbot/1.0' $@ 2>&1 | tee -a wg
 
 grep '^--' wg | awk '{ print $3 }' \
   | grep -v '\.\(css\|js\|png\|gif\|jpg\|txt\|ico\|ttf\|svg\)$' \
-  | tee ur
+  | tee -a ur
+
+rm wg
 
 sleep 10
 
 php crawl.php $(cat ur | shuf)
+
+rm ur
+
+
