@@ -28,6 +28,7 @@ $arg = $argv;
 array_shift($arg);
 
 foreach ($arg as $url) {
+	$url = preg_replace('/\/$/','',$url);
 	$file = file_get_contents($url);
 	if (!$file)
 		continue;
