@@ -6,4 +6,4 @@ grep '^--' wg | awk '{ print $3 }' \
 
 sleep 10
 
-php crawl.php $(cat ur)
+php crawl.php $(cat ur | shuf)
