@@ -28,7 +28,7 @@ if (isset($_GET['q']) && preg_replace('/\s+/', '', $_GET['q']) != '') {
 
 	$sql = 'SELECT * FROM indexed WHERE 1=1';
 
-	$terms = explode(' ', preg_replace('/\s+/', '', $_GET['q']));
+	$terms = explode(' ', trim(preg_replace('/\s+/', ' ', $_GET['q'])));
 	$params = array();
 	foreach ($terms as $term) {
 		if (substr($term, 0, 1) == '-') {
