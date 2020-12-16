@@ -22,9 +22,10 @@ error_reporting(E_ALL);
 </div>
 
 <?php
+$db = new PDO("sqlite:db.sqlite");
+$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
 
 if (isset($_GET['q']) && preg_replace('/\s+/', '', $_GET['q']) != '') {
-	$db = new PDO("sqlite:db.sqlite");
 
 	$sql = 'SELECT * FROM indexed WHERE 1=1';
 
@@ -43,7 +44,6 @@ if (isset($_GET['q']) && preg_replace('/\s+/', '', $_GET['q']) != '') {
 	}
 	$sql = $sql . ';';
 	
-	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
 	$stmt = $db->prepare($sql);
 	$stmt->execute($params);
 
@@ -93,6 +93,35 @@ if (isset($_GET['q']) && preg_replace('/\s+/', '', $_GET['q']) != '') {
 	if (!$results)
 		echo '<div class="box">No results.</div>';
 
+} else {
+?>
+
+<div class='box'>
+<h2>welcome to searpl</h2>
+i am an <a href='https://github.com/xfnw/searpl'>open source</a> search
+engine that can find stuff :3
+</div>
+
+<div class='box'>
+normal words inputted will be tags, a -tag will blacklist the tag and
+there is also unsorted SQL LIKE syntax.
+<br>
+more stuff like site: coming soon!
+</div>
+
+<div class='box'>
+i have
+<strong>
+<?php
+echo $db->query('SELECT id FROM indexed ORDER BY id DESC LIMIT 1')->fetchColumn();
+?>
+</strong> pages indexed, using <strong>
+<?php
+echo round(filesize('db.sqlite')/1024/1024);
+?>
+</strong>mb of storage
+</div>
+<?php
 }
 ?>
 </div>

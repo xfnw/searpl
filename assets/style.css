@@ -35,7 +35,7 @@ text-decoration: underline;
 }
 
 
-.preview h1 {
+.preview h1, h2 {
 margin: 0;
 padding: 0;
 margin-bottom: 5px;
