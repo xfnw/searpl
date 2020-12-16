@@ -53,7 +53,9 @@ if (isset($_GET['q']) && preg_replace('/\s+/', '', $_GET['q']) != '') {
 	while ($row = $stmt->fetch()) {
 		$score = 0;
 		foreach ($terms as $param)
-			$score = $score + substr_count(strtolower($row['content']),strtolower($param));
+			$score = $score + 100*(substr_count(strtolower($row['content']),strtolower($param)) / strlen($row['content']));
+			$score = $score + 5000*(substr_count(strtolower($row['url']),strtolower($param)) / strlen($row['url']));
+			$score = $score + 3000*(substr_count(strtolower($row['title']),strtolower($param)) / strlen($row['title']));
 		array_push($scores, $score);
 		$row['score'] = $score;
 		array_push($rows, $row);
@@ -70,12 +72,12 @@ if (isset($_GET['q']) && preg_replace('/\s+/', '', $_GET['q']) != '') {
 <div class='box'>
 <a href="<?php echo htmlspecialchars($row['url']); ?>"><?php echo htmlspecialchars($row['title']); ?></a>
 <br>
-<small>(score: <?php echo $row['score']; ?>) <?php echo htmlspecialchars($row['url']); ?></small>
+<small>(score: <?php echo round($row['score']); ?>) <?php echo htmlspecialchars($row['url']); ?></small>
 <br>
 ...<?php
 		$content = $row['content'];
 		foreach ($terms as $param) {
-			$pos = strpos($content, $param);
+			$pos = strpos(strtolower($content), strtolower($param));
 			if ($pos !== false) {
 				echo htmlspecialchars(substr($content,$pos-50,50));
 				echo '<strong>'.htmlspecialchars($param).'</strong>';
