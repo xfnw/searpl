@@ -53,7 +53,7 @@ if (isset($_GET['q']) && preg_replace('/\s+/', '', $_GET['q']) != '') {
 	while ($row = $stmt->fetch()) {
 		$score = 0;
 		foreach ($terms as $param)
-			$score = $score + substr_count($row['content'],$param);
+			$score = $score + substr_count(strtolower($row['content']),strtolower($param));
 		array_push($scores, $score);
 		$row['score'] = $score;
 		array_push($rows, $row);
