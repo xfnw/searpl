@@ -6,7 +6,6 @@ error_reporting(E_ALL);
 <!DOCTYPE HTML>
 <html lang="en">
 <link rel="stylesheet" type="text/css" href="assets/style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <meta name="viewport" content="width=device-width, initial-scale=1" /> 
 <meta name="description" content="a search engine">
 <title>searpl</title>
@@ -17,7 +16,7 @@ error_reporting(E_ALL);
 <div class='box search-container'>
 <form action="./">
       <input type="text" placeholder="Search.." name="q" value="<?php if (isset($_GET['q'])) {echo htmlspecialchars($_GET['q']); } ?>">
-      <button type="submit"><i class="fa fa-search"></i></button>
+      <button type="submit"><i class="icon-search"></i></button>
     </form>
 </div>
 
