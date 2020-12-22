@@ -38,6 +38,10 @@ foreach ($arg as $url) {
 		continue;
 	echo $title;
 	echo $document;
+
+	$stmt = $db->prepare('DELETE FROM indexed WHERE url = ?');
+	$stmt->execute([$url]);
+
 	$stmt = $db->prepare('INSERT INTO indexed (title, url, content) VALUES (?, ?, ?)');
 	$stmt->execute([$title, $url, $document]);
 }

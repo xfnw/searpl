@@ -64,8 +64,6 @@ if (isset($_GET['q']) && preg_replace('/\s+/', '', $_GET['q']) != '') {
 	$results = false;
 	foreach ($rows as $row) {
 		$results = true;
-		if (substr($row['url'],-1,1)=='/')
-			continue
 ?>
 
 <div class='box'>
