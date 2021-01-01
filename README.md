@@ -5,8 +5,7 @@ searpl is a small php search engine with the following features:
 - [x] robot.txt compliant
 - [x] sqlite, so theres no need to run some fancy database daemon
 - [x] javascript-free
-- [ ] it uses a cloudflare cdn for the search button icon,
-     but you can block it without impacting much.
+- [x] no cdns!
 - [x] read-only database, nothing is written except with the shell
 
 
