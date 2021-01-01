@@ -2,6 +2,7 @@ wget --spider --force-html --tries 1 --timeout 1 -r -l1 -H -U 'searplbot/1.0' $@
 
 grep '^--' wg | awk '{ print $3 }' \
   | grep -v '\.\(css\|js\|png\|gif\|jpg\|txt\|ico\|ttf\|svg\)$' \
+  | sort | uniq \
   | tee -a ur
 
 rm wg
