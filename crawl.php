@@ -28,14 +28,19 @@ $arg = $argv;
 array_shift($arg);
 
 foreach ($arg as $url) {
+	echo "\n\n";
 	$url = preg_replace('/\/$/','',$url);
+	echo $url."\n";
 	$file = file_get_contents($url);
 	if (!$file)
 		continue;
 	$title = page_title($file);
 	$document = preg_replace('/[ \t]+/', ' ', preg_replace('/[\r\n]+/', "", strip_tags($file)));
-	if (!$title || !$document)
+	if (!$title || !$document) {
+		echo "no title!\n";
 		continue;
+	}
+
 	echo $title;
 	echo $document;
 
