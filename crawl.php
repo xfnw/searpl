@@ -28,7 +28,7 @@ $arg = $argv;
 array_shift($arg);
 
 foreach ($arg as $url) {
-	echo "\n\n";
+	echo "\n";
 	$url = preg_replace('/\/$/','',$url);
 	echo $url."\n";
 	$file = file_get_contents($url);
@@ -41,8 +41,7 @@ foreach ($arg as $url) {
 		continue;
 	}
 
-	echo $title;
-	echo $document;
+	echo "title: ".$title."\n";
 
 	$stmt = $db->prepare('DELETE FROM indexed WHERE url = ?');
 	$stmt->execute([$url]);
