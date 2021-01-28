@@ -31,6 +31,10 @@ foreach ($arg as $url) {
 	echo "\n";
 	$url = preg_replace('/\/$/','',$url);
 	echo $url."\n";
+
+	$stmt = $db->prepare('DELETE FROM indexed WHERE url = ?');
+	$stmt->execute([$url]);
+
 	$file = file_get_contents($url);
 	if (!$file)
 		continue;
@@ -42,9 +46,6 @@ foreach ($arg as $url) {
 	}
 
 	echo "title: ".$title."\n";
-
-	$stmt = $db->prepare('DELETE FROM indexed WHERE url = ?');
-	$stmt->execute([$url]);
 
 	$stmt = $db->prepare('INSERT INTO indexed (title, url, content) VALUES (?, ?, ?)');
 	$stmt->execute([$title, $url, $document]);
