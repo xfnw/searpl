@@ -46,7 +46,7 @@ foreach ($arg as $url) {
 	}
 
 	echo "title: ".$title."\n";
-echo $document;
+
 	$stmt = $db->prepare('INSERT INTO indexed (title, url, content) VALUES (?, ?, ?)');
 	$stmt->execute([$title, $url, $document]);
 }
