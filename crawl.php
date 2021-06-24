@@ -39,14 +39,14 @@ foreach ($arg as $url) {
 	if (!$file)
 		continue;
 	$title = page_title($file);
-	$document = preg_replace('/[ \t]+/', ' ', preg_replace('/[\r\n]+/', "", strip_tags($file)));
+	$document = preg_replace('/[ \t]+/', ' ', preg_replace('/[\r\n]+/', " ", strip_tags(preg_replace('/<(script|style)>(.*)<\/\1>/siU', ' ',$file))));
 	if (!$title || !$document) {
 		echo "no title!\n";
 		continue;
 	}
 
 	echo "title: ".$title."\n";
-
+echo $document;
 	$stmt = $db->prepare('INSERT INTO indexed (title, url, content) VALUES (?, ?, ?)');
 	$stmt->execute([$title, $url, $document]);
 }
