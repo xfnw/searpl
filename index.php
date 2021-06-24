@@ -67,18 +67,18 @@ if (isset($_GET['q']) && preg_replace('/\s+/', '', $_GET['q']) != '') {
 ?>
 
 <div class='box'>
-<a href="<?php echo htmlspecialchars($row['url']); ?>"><?php echo htmlspecialchars($row['title']); ?></a>
+<a href="<?php echo htmlspecialchars(htmlspecialchars_decode($row['url'])); ?>"><?php echo htmlspecialchars(htmlspecialchars_decode($row['title'])); ?></a>
 <br>
-<small>(score: <?php echo round($row['score']); ?>) <?php echo htmlspecialchars($row['url']); ?></small>
+<small>(score: <?php echo round($row['score']); ?>) <?php echo htmlspecialchars(htmlspecialchars_decode($row['url'])); ?></small>
 <br>
 ...<?php
 		$content = $row['content'];
 		foreach ($terms as $param) {
 			$pos = strpos(strtolower($content), strtolower($param));
 			if ($pos !== false) {
-				echo htmlspecialchars(substr($content,$pos-50,50));
-				echo '<strong>'.htmlspecialchars($param).'</strong>';
-				echo htmlspecialchars(substr($content,$pos+strlen($param),50)).'...';
+				echo htmlspecialchars(htmlspecialchars_decode(substr($content,$pos-50,50)));
+				echo '<strong>'.htmlspecialchars(htmlspecialchars_decode($param)).'</strong>';
+				echo htmlspecialchars(htmlspecialchars_decode(substr($content,$pos+strlen($param),50))).'...';
 			}
 		}
 
