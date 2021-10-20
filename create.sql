@@ -1,2 +1,2 @@
-CREATE TABLE indexed (id INTEGER PRIMARY KEY, title VARCHAR(255), url VARCHAR(512) UNIQUE, content TEXT)
+CREATE VIRTUAL TABLE indexed USING FTS5(title, url, content);
 

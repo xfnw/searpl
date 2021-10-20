@@ -26,62 +26,27 @@ $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
 
 if (isset($_GET['q']) && preg_replace('/\s+/', '', $_GET['q']) != '') {
 
-	$sql = 'SELECT * FROM indexed WHERE 1=1';
-
-	$terms = explode(' ', trim(preg_replace('/\s+/', ' ', $_GET['q'])));
-	$params = array();
-	foreach ($terms as $term) {
-		if (substr($term, 0, 1) == '-') {
-
-			$sql = $sql . ' AND content NOT LIKE ?';
-			array_push($params,'%'.substr($term,1).'%');
-		} else {
-
-			$sql = $sql . ' AND content LIKE ?';
-			array_push($params,'%'.$term.'%');
-		}
-	}
-	$sql = $sql . ';';
+	$sql = "SELECT title,url,snippet(indexed,2,'<b>','</b>','...',15) as snippet FROM indexed WHERE indexed MATCH ? ORDER BY bm25(indexed,2,2,1)";
+	$params = [$_GET['q']];
 	
 	$stmt = $db->prepare($sql);
+
+	set_error_handler(function ($_,$msg) {echo '<div class="box">'.substr($msg,65).'. you may want to view <a href="https://www.sqlite.org/fts5.html#full_text_query_syntax">this documentation</a> on writing valid queries.</div>';}, E_WARNING);
 	$stmt->execute($params);
-
-
-	$rows = array();
-	$scores = array();
-	while ($row = $stmt->fetch()) {
-		$score = 0;
-		foreach ($terms as $param)
-			$score = $score + 100*(substr_count(strtolower($row['content']),strtolower($param)) / strlen($row['content']));
-			$score = $score + 5000*(substr_count(strtolower($row['url']),strtolower($param)) / strlen($row['url']));
-			$score = $score + 3000*(substr_count(strtolower($row['title']),strtolower($param)) / strlen($row['title']));
-		array_push($scores, $score);
-		$row['score'] = $score;
-		array_push($rows, $row);
-	}
-	array_multisort($scores, SORT_DESC, $rows);
+	restore_error_handler();
 
 	$results = false;
-	foreach ($rows as $row) {
+	while ($row = $stmt->fetch()) {
 		$results = true;
 ?>
 
 <div class='box'>
-<a href="<?php echo htmlspecialchars(htmlspecialchars_decode($row['url'])); ?>"><?php echo htmlspecialchars(htmlspecialchars_decode($row['title'])); ?></a>
+<a href="<?php echo $row['url']; ?>"><?php echo $row['title']; ?></a>
 <br>
-<small>(score: <?php echo round($row['score']); ?>) <?php echo htmlspecialchars(htmlspecialchars_decode($row['url'])); ?></small>
+<small><?php echo $row['url']; ?></small>
 <br>
-...<?php
-		$content = $row['content'];
-		foreach ($terms as $param) {
-			$pos = strpos(strtolower($content), strtolower($param));
-			if ($pos !== false) {
-				echo htmlspecialchars(htmlspecialchars_decode(substr($content,$pos-50,50)));
-				echo '<strong>'.htmlspecialchars(htmlspecialchars_decode($param)).'</strong>';
-				echo htmlspecialchars(htmlspecialchars_decode(substr($content,$pos+strlen($param),50))).'...';
-			}
-		}
-
+<?php
+		echo $row['snippet'];
 ?>
 </div>
 <?php
@@ -95,22 +60,19 @@ if (isset($_GET['q']) && preg_replace('/\s+/', '', $_GET['q']) != '') {
 
 <div class='box'>
 <h2>welcome to searpl</h2>
-i am an <a href='https://github.com/xfnw/searpl'>open source</a> search
+i am a simple, <a href='https://github.com/xfnw/searpl'>open source</a> search
 engine that can find stuff :3
 </div>
 
 <div class='box'>
-normal words inputted will be tags, a -tag will blacklist the tag and
-there is also unsorted SQL LIKE syntax.
-<br>
-more stuff like site: coming soon!
+queries use <a href='https://www.sqlite.org/fts5.html#full_text_query_syntax'>FTS syntax</a>.
 </div>
 
 <div class='box'>
 i have
 <strong>
 <?php
-echo $db->query('SELECT id FROM indexed ORDER BY id DESC LIMIT 1')->fetchColumn();
+echo $db->query('SELECT rowid FROM indexed ORDER BY rowid DESC LIMIT 1')->fetchColumn();
 ?>
 </strong> pages indexed, using <strong>
 <?php
