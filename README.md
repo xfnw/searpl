@@ -11,7 +11,7 @@ searpl is a small php search engine with the following features:
 
 
 ## licensing
-searpl is licenced under an MIT licence, see [LICENSE](LICENSE)
+searpl is licensed under an MIT licence, see [LICENSE](LICENSE)
 for more information
 
 ## setup
