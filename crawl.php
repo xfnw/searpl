@@ -42,7 +42,7 @@ foreach ($arg as $url) {
 	$stmt = $db->prepare('DELETE FROM indexed WHERE url = ?');
 	$stmt->execute([htmlspecialchars(htmlspecialchars_decode($url))]);
 
-	$file = file_get_contents($url, false, $context);
+	$file = file_get_contents($url, false, $context, 0, 1000000);
 	if (!$file || strpos($http_response_header[0],'200 OK') === false)
 		continue;
 	$title = page_title($file);
