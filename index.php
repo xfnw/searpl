@@ -15,7 +15,7 @@ error_reporting(E_ALL);
 
 <div class='box search-container'>
 <form action="./">
-      <input type="text" placeholder="Search.." name="q" value="<?php if (isset($_GET['q'])) {echo htmlspecialchars($_GET['q']); } ?>">
+      <input type="text" placeholder="Search.." name="q" value="<?php if (isset($_GET['q'])) {echo htmlspecialchars($_GET['q']); } ?>" autofocus>
       <button type="submit"><i class="icon-search"></i></button>
     </form>
 </div>
