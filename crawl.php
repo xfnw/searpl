@@ -55,5 +55,5 @@ foreach ($arg as $url) {
 	echo "title: ".$title."\n";
 
 	$stmt = $db->prepare('INSERT INTO indexed (title, url, content) VALUES (?, ?, ?)');
-	$stmt->execute([htmlspecialchars(htmlspecialchars_decode($title)), htmlspecialchars(htmlspecialchars_decode($url)), htmlspecialchars(htmlspecialchars_decode($document))]);
+	$stmt->execute([htmlspecialchars(str_replace('&mdash;','—',htmlspecialchars_decode($title))), htmlspecialchars(str_replace('&mdash;','—',htmlspecialchars_decode($url))), htmlspecialchars(str_replace('&mdash;','—',htmlspecialchars_decode($document)))]);
 }
