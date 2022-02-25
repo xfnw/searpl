@@ -17,30 +17,14 @@ margin: 0 auto;
 }
 
 a {
-color: #aac;
+color: #3291FF;
 }
 
-h1 a {
-text-decoration: none;
-color: #cdcdcd;
-}
-
-h1 a::before {
-content: "#";
-color: #aac;
-margin-right: 10px;
-}
-h1 a:hover::before {
-text-decoration: underline;
-}
-
-
-.preview h1, h2 {
+h2 {
 margin: 0;
 padding: 0;
 margin-bottom: 5px;
 }
-
 
 .search-container input[type=text] {
   padding: 6px;
@@ -90,3 +74,4 @@ margin-bottom: 5px;
 .icon-search:before {
   content: "\e986";
 }
+
