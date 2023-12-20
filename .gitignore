@@ -1,4 +1,5 @@
 *.sqlite
 *.db
 *.sqlite.bak
+*.so
 
