@@ -16,7 +16,7 @@ for more information
 this guide assumes you have shell access and are comfortable
 using command line tools like git.
 
-- make sure you have php, php-pdo, php-sqlite, wget, sqlite3 and git installed
+- make sure you have php, php-sqlite, wget, sqlite3 and git installed
 - go in your `htdocs`, `public_html` or whatever and git clone
   this repo
 - copy the contents of `create.sql` and paste it into the prompt
