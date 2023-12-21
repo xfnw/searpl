@@ -6,29 +6,27 @@ error_reporting(E_ALL);
 $db = new PDO("sqlite:db.sqlite");
 
 $context = stream_context_create(
-    array(
-        'http' => array(
-            'follow_location' => false,
-            'timeout' => 2,
-            'user_agent' => 'searplbot/1.0'
-        )
-    )
+	array(
+		'http' => array(
+			'follow_location' => false,
+			'timeout' => 2,
+			'user_agent' => 'searplbot/1.0'
+		)
+	)
 );
 
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
-//$stmt = $db->prepare($sql);
-//$stmt->execute($params);
 
-    function page_title($fp) {
-        $res = preg_match("/<title>(.*)<\/title>/siU", $fp, $title_matches);
-        if (!$res) 
-            return null; 
+function page_title($fp) {
+	$res = preg_match("/<title>(.*)<\/title>/siU", $fp, $title_matches);
+	if (!$res) 
+	    return null; 
 
-        // Clean up title: remove EOL's and excessive whitespace.
-        $title = preg_replace('/\s+/', ' ', $title_matches[1]);
-        $title = trim($title);
-        return $title;
-    }
+	// Clean up title: remove EOL's and excessive whitespace.
+	$title = preg_replace('/\s+/', ' ', $title_matches[1]);
+	$title = trim($title);
+	return $title;
+}
 
 
 

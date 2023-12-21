@@ -15,17 +15,16 @@ error_reporting(E_ALL);
 
 <div class='box search-container'>
 <form action="./">
-      <input type="text" placeholder="Search.." name="q" value="<?php if (isset($_GET['q'])) {echo htmlspecialchars($_GET['q']); } ?>" autofocus>
-      <button type="submit"><i class="icon-search"></i></button>
-    </form>
+<input type="text" placeholder="Search.." name="q" value="<?php if (isset($_GET['q'])) {echo htmlspecialchars($_GET['q']);} ?>" autofocus>
+<button type="submit"><i class="icon-search"></i></button>
+</form>
 </div>
 
 <?php
 $db = new PDO("sqlite:db.sqlite");
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
+$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
 if (isset($_GET['q']) && preg_replace('/\s+/', '', $_GET['q']) != '') {
-
 	$sql = "SELECT title,url,snippet(indexed,2,'<b>','</b>','...',15) as snippet FROM indexed WHERE indexed MATCH ? ORDER BY bm25(indexed,2,2,1)";
 	$params = [$_GET['q']];
 	
@@ -76,9 +75,9 @@ echo $db->query('SELECT rowid FROM indexed ORDER BY rowid DESC LIMIT 1')->fetchC
 ?>
 </strong> pages indexed, using <strong>
 <?php
-echo round(filesize('db.sqlite')/1024/1024);
+echo round(filesize('db.sqlite')/1048576);
 ?>
-</strong>mb of storage
+</strong>MiB of storage
 </div>
 <?php
 }
