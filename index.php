@@ -14,28 +14,30 @@ error_reporting(E_ALL);
 <h1>searpl</h1>
 
 <div class='box search-container'>
-<form action="./">
-<input type="text" placeholder="Search.." name="q" value="<?php if (isset($_GET['q'])) {echo htmlspecialchars($_GET['q']);} ?>" autofocus>
+<form action="?">
+<input type="text" placeholder="Search.." name="q" value="<?php if (isset($_GET['q'])) {echo htmlspecialchars($_GET['q']);} ?>" onfocus="this.select()" autofocus>
 <button type="submit"><i class="icon-search"></i></button>
 </form>
 </div>
 
 <?php
-$db = new PDO("sqlite:db.sqlite");
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+$db = new SQLite3("db.sqlite", SQLITE3_OPEN_READONLY);
 
 if (isset($_GET['q']) && preg_replace('/\s+/', '', $_GET['q']) != '') {
-	$sql = "SELECT title,url,snippet(indexed,2,'<b>','</b>','...',15) as snippet FROM indexed WHERE indexed MATCH ? ORDER BY bm25(indexed,2,2,1)";
-	$params = [$_GET['q']];
+	set_error_handler(function ($_,$_m) {echo "<!-- falling back to bm25 ranking -->\n";}, E_WARNING);
+	$rank = ($db->loadExtension("searplrank.so") ? "searplrank(indexed) desc" : "bm25(indexed,2,2,1)");
+	restore_error_handler();
+	$sql = "SELECT title,url,snippet(indexed,2,'<b>','</b>','...',15) as snippet FROM indexed WHERE indexed MATCH ? ORDER BY ".$rank;
 	
 	$stmt = $db->prepare($sql);
+	$stmt->bindValue(1, $_GET['q']);
 
 	set_error_handler(function ($_,$msg) {echo '<div class="box">'.substr($msg,65).'. you may want to view <a href="https://www.sqlite.org/fts5.html#full_text_query_syntax">this documentation</a> on writing valid queries.</div>';}, E_WARNING);
-	$stmt->execute($params);
+	$res = $stmt->execute();
 	restore_error_handler();
 
 	$results = false;
-	while ($row = $stmt->fetch()) {
+	if ($res) while ($row = $res->fetchArray()) {
 		$results = true;
 ?>
 
@@ -71,7 +73,7 @@ queries use <a href='https://www.sqlite.org/fts5.html#full_text_query_syntax'>FT
 i have
 <strong>
 <?php
-echo $db->query('SELECT rowid FROM indexed ORDER BY rowid DESC LIMIT 1')->fetchColumn();
+echo $db->querySingle('SELECT rowid FROM indexed ORDER BY rowid DESC LIMIT 1');
 ?>
 </strong> pages indexed, using <strong>
 <?php
