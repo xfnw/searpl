@@ -41,7 +41,7 @@ static void custom_rank(const Fts5ExtensionApi *pApi, Fts5Context *pFts,
 	UNWRAP(pApi->xColumnText(pFts, 2, &text, &length));
 	score += 1000 * matches[2] / length; /* content */
 
-	sqlite3_result_int(pCtx, score / 10);
+	sqlite3_result_double(pCtx, score / 10.0);
 	return;
 err:
 	sqlite3_result_error_code(pCtx, rc);
