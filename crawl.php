@@ -27,21 +27,26 @@ function page_title($fp) {
 	return $title;
 }
 
-
-
 $arg = $argv;
 array_shift($arg);
 
+$trunc = 0;
+$prefix = '';
+if (array_key_exists(0,$argv) && strlen($arg[0]) > 1 && $arg[0][0]=='-') {
+	$trunc = (int)substr(array_shift($arg),1);
+	$prefix = array_shift($arg);
+}
+
 foreach ($arg as $url) {
-	echo "\n";
-	echo $url."\n";
+	$turl = $prefix.substr($url, $trunc);
+	echo "\n".$turl."\n";
 
 	$stmt = $db->prepare('DELETE FROM indexed WHERE url = ?');
 	$stmt->bindValue(1, htmlspecialchars(htmlspecialchars_decode($url)));
 	$stmt->execute();
 
 	$file = file_get_contents($url, false, $context, 0, 1000000);
-	if (!$file || strpos($http_response_header[0],'200 OK') === false)
+	if (!$file || isset($http_response_header) && strpos($http_response_header[0],'200 OK') === false)
 		continue;
 	$title = page_title($file);
 	$document = preg_replace('/[ \t]+/', ' ', preg_replace('/[\r\n]+/', " ", strip_tags(preg_replace('/<(script|style)>(.*)<\/\1>/siU', ' ',$file))));
@@ -54,7 +59,7 @@ foreach ($arg as $url) {
 
 	$stmt = $db->prepare('INSERT INTO indexed (title, url, content) VALUES (?, ?, ?)');
 	$stmt->bindValue(1, htmlspecialchars(str_replace('&mdash;','—',htmlspecialchars_decode($title))));
-	$stmt->bindValue(2, htmlspecialchars(str_replace('&mdash;','—',htmlspecialchars_decode($url))));
+	$stmt->bindValue(2, htmlspecialchars(str_replace('&mdash;','—',htmlspecialchars_decode($turl))));
 	$stmt->bindValue(3, htmlspecialchars(str_replace('&mdash;','—',htmlspecialchars_decode($document))));
 	$stmt->execute();
 }
