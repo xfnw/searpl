@@ -14,10 +14,11 @@ static void custom_rank(const Fts5ExtensionApi *pApi, Fts5Context *pFts,
 	int score = 0;
 	const char *text;
 
-	if (pApi->xColumnCount(pFts) != 3) {
+	if (pApi->xColumnCount(pFts) < 3) {
 		sqlite3_result_error(pCtx,
-				     "this ranking algorithm depends on a "
-				     "specific number of columns",
+				     "this ranking algorithm assumes "
+				     "the first three columns are "
+				     "title url content (in order)",
 				     -1);
 		return;
 	}
@@ -29,6 +30,8 @@ static void custom_rank(const Fts5ExtensionApi *pApi, Fts5Context *pFts,
 	for (int i = 0; i < tmatches; i++) {
 		int ip, ic, io;
 		UNWRAP(pApi->xInst(pFts, i, &ip, &ic, &io));
+		if (ic >= 3)
+			continue;
 		matches[ic] += 1;
 	}
 
