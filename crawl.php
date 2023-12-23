@@ -39,6 +39,8 @@ if (array_key_exists(0,$argv) && strlen($arg[0]) > 1 && $arg[0][0]=='-') {
 
 foreach ($arg as $url) {
 	$turl = $prefix.substr($url, $trunc);
+	if ($trunc != 0)
+		$turl = preg_replace('/\/index.html$/', '/', $turl);
 	echo "\n".$turl."\n";
 
 	$stmt = $db->prepare('DELETE FROM indexed WHERE url = ?');
