@@ -38,11 +38,11 @@ static void custom_rank(const Fts5ExtensionApi *pApi, Fts5Context *pFts,
 	/* getting the column's text and discarding it seems like the
 	 * easiest way to get the length. xColumnSize gives tokens */
 	UNWRAP(pApi->xColumnText(pFts, 0, &text, &length));
-	score += 30000 * matches[0] / length; /* title */
+	score += length ? 30000 * matches[0] / length : 0; /* title */
 	UNWRAP(pApi->xColumnText(pFts, 1, &text, &length));
-	score += 50000 * matches[1] / length; /* url */
+	score += length ? 50000 * matches[1] / length : 0; /* url */
 	UNWRAP(pApi->xColumnText(pFts, 2, &text, &length));
-	score += 1000 * matches[2] / length; /* content */
+	score += length ? 10000 * matches[2] / length : 0; /* content */
 
 	sqlite3_result_double(pCtx, score / 10.0);
 	return;
