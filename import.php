@@ -21,7 +21,7 @@ while ($row = $inp->fetchArray()) {
 	$stmt->bindValue(1, htmlspecialchars(htmlspecialchars_decode($url)));
 	$stmt->execute();
 
-	$document = preg_replace('/[ \t]+/', ' ', preg_replace('/[\r\n]+/', " ", strip_tags(preg_replace('/<(script|style)>(.*)<\/\1>/siU', ' ',$content))));
+	$document = preg_replace('/[ \t]+/', ' ', preg_replace('/[\r\n]+/', " ", strip_tags(preg_replace('/<(script|style)[^>]*>(.*)<\/\1>/siU', ' ',$content))));
 
 	echo "title: ".$title."\n";
 

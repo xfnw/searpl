@@ -51,7 +51,7 @@ foreach ($arg as $url) {
 	if (!$file || isset($http_response_header) && strpos($http_response_header[0],'200 OK') === false)
 		continue;
 	$title = page_title($file);
-	$document = preg_replace('/[ \t]+/', ' ', preg_replace('/[\r\n]+/', " ", strip_tags(preg_replace('/<(script|style)>(.*)<\/\1>/siU', ' ',$file))));
+	$document = preg_replace('/[ \t]+/', ' ', preg_replace('/[\r\n]+/', " ", strip_tags(preg_replace('/<(script|style)[^>]*>(.*)<\/\1>/siU', ' ',$file))));
 	if (!$title || !$document) {
 		echo "no title!\n";
 		continue;
