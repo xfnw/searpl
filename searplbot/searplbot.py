@@ -9,6 +9,28 @@ ua = "searplbot/2.0"
 headers = {"User-Agent": ua}
 
 
+class RobotCache:
+    """shim to make urllib.robotparser.RobotFileParser work with multiple domains"""
+
+    def __init__(self):
+        self.cache = {}
+
+    def can_fetch(self, url):
+        purl = urlparse(url)
+        domain = purl.netloc
+
+        if domain not in self.cache:
+            robot = robotparser.RobotFileParser()
+            robot.set_url(purl._replace(path="/robots.txt", fragment="").geturl())
+            robot.read()
+            self.cache[domain] = robot
+
+        # TODO: support robots.txt crawl delay
+        # perhaps just sleep here?
+
+        return self.cache[domain].can_fetch(ua, url)
+
+
 def get(url, timeout=2):
     req = request.Request(url, headers=headers, unverifiable=True)
     return request.urlopen(req, timeout=timeout)
@@ -25,8 +47,10 @@ def pop_url(db):
     raise Exception("no more urls")
 
 
-def index_page(url, db):
-    # TODO: check robots.txt here
+def index_page(url, db, robots):
+    if not robots.can_fetch(url):
+        print("beep boop")
+        return
 
     try:
         res = get(url)
@@ -70,16 +94,18 @@ def main():
     con = sqlite3.connect(args.database)
     cur = con.cursor()
 
+    robots = RobotCache()
+
     for url in args.url:
         print("indexing", url)
-        index_page(url, cur)
+        index_page(url, cur, robots)
         con.commit()
 
     for i in range(int(args.c)):
         url = pop_url(cur)
         con.commit()
         print("indexing", url)
-        index_page(url, cur)
+        index_page(url, cur, robots)
         con.commit()
 
 
