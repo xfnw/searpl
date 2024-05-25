@@ -70,7 +70,12 @@ def index_page(url, db, robots):
         return
 
     for element in html.cssselect("a"):
-        newurl = urlparse(element.attrib.get("href"))._replace(fragment="").geturl()
+        newurl = urlparse(element.attrib.get("href"))._replace(fragment="")
+
+        if newurl.scheme != "https" and newurl.scheme != "http":
+            continue
+
+        newurl = newurl.geturl()
 
         db.execute("SELECT 1 FROM indexed WHERE url = ?", (newurl,))
         if db.fetchone():
