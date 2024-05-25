@@ -30,11 +30,13 @@ optionally, if you want search ranking that prioritizes smol sites:
 - copy `searplrank.so` to wherever you set the extension_dir to
 
 ## crawling
-to crawl a site, do `./urls.sh https://example.com`
+the new crawler requires python3 and lxml
 
-to recursively crawl, change the recursion limit with -l
+to index a page, feed it the database and some urls
+```
+python3 -m searplbot db.sqlite [some url]
+```
 
-```
-./urls.sh -l5 https://example.com
-```
+the -c flag can be used to enable crawling and specify how many
+connections to make before exiting
 
