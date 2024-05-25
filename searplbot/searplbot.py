@@ -48,7 +48,16 @@ def index_page(url, db):
     if len(titles) == 0:
         return
     title = titles[0].text_content()
+
+    # FIXME: clean up pages better, perhaps using readability
+    for element in html.cssselect("script, style"):
+        element.drop_tree()
+
     print("title:", title)
+    db.execute(
+        "INSERT INTO indexed (title, url, content) VALUES (?, ?, ?)",
+        (title, url, html.text_content()),
+    )
 
 
 def main():
