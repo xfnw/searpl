@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse, sqlite3
+from time import sleep
 from urllib import request, robotparser
 from urllib.parse import urlparse
 from lxml.html import fromstring
@@ -12,8 +13,9 @@ headers = {"User-Agent": ua}
 class RobotCache:
     """shim to make urllib.robotparser.RobotFileParser work with multiple domains"""
 
-    def __init__(self):
+    def __init__(self, delay=1):
         self.cache = {}
+        self.delay = delay
 
     def can_fetch(self, url):
         purl = urlparse(url)
@@ -25,10 +27,15 @@ class RobotCache:
             robot.read()
             self.cache[domain] = robot
 
-        # TODO: support robots.txt crawl delay
-        # perhaps just sleep here?
+        rb = self.cache[domain]
 
-        return self.cache[domain].can_fetch(ua, url)
+        # just skip pages that ask for a higher delay than
+        # we are using; no point in waiting around when we
+        # have other sites to crawl
+        if (rb.crawl_delay(ua) or 0) > self.delay:
+            return False
+
+        return rb.can_fetch(ua, url)
 
 
 def get(url, timeout=2):
@@ -86,7 +93,8 @@ def index_page(url, db, robots):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", help="crawl count", default=0)
+    parser.add_argument("-c", help="crawl count", default=0, type=int)
+    parser.add_argument("-d", help="crawl delay", default=1, type=float)
     parser.add_argument("database")
     parser.add_argument("url", nargs="*")
     args = parser.parse_args()
@@ -94,19 +102,21 @@ def main():
     con = sqlite3.connect(args.database)
     cur = con.cursor()
 
-    robots = RobotCache()
+    robots = RobotCache(delay=args.d)
 
     for url in args.url:
         print("indexing", url)
         index_page(url, cur, robots)
         con.commit()
+        sleep(args.d)
 
-    for i in range(int(args.c)):
+    for i in range(args.c):
         url = pop_url(cur)
         con.commit()
         print("indexing", url)
         index_page(url, cur, robots)
         con.commit()
+        sleep(args.d)
 
 
 if __name__ == "__main__":
