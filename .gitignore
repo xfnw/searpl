@@ -2,4 +2,6 @@
 *.db
 *.sqlite.bak
 *.so
+*.pyc
+__pycache__
 
