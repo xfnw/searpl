@@ -3,5 +3,7 @@
 *.sqlite.bak
 *.so
 *.pyc
+*-wal
+*-journal
 __pycache__
 
