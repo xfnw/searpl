@@ -71,6 +71,11 @@ def index_page(url, db, robots):
 
     for element in html.cssselect("a"):
         newurl = urlparse(element.attrib.get("href"))._replace(fragment="").geturl()
+
+        db.execute("SELECT 1 FROM indexed WHERE url = ?", (newurl,))
+        if db.fetchone():
+            continue
+
         db.execute(
             "INSERT INTO tocrawl (url) VALUES (?) ON CONFLICT DO NOTHING", (newurl,)
         )
@@ -85,6 +90,7 @@ def index_page(url, db, robots):
         element.drop_tree()
 
     print("title:", title)
+    db.execute("DELETE FROM indexed WHERE url = ?", (url,))
     db.execute(
         "INSERT INTO indexed (title, url, content) VALUES (?, ?, ?)",
         (title, url, html.text_content()),
