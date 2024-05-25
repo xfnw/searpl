@@ -1,2 +1,3 @@
-CREATE VIRTUAL TABLE indexed USING FTS5(title, url, content);
+CREATE VIRTUAL TABLE IF NOT EXISTS indexed USING FTS5(title, url, content);
+CREATE TABLE IF NOT EXISTS tocrawl (url TEXT PRIMARY KEY);
 
