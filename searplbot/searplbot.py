@@ -61,7 +61,11 @@ def pop_url(db):
     db.execute("DELETE FROM tocrawl WHERE url IN (SELECT url FROM indexed)")
 
     db.execute(
-        "DELETE FROM tocrawl WHERE rowid IN (SELECT rowid FROM tocrawl ORDER BY RANDOM() LIMIT 1) RETURNING url"
+        """DELETE FROM tocrawl WHERE rowid IN
+        (SELECT rowid FROM tocrawl WHERE netloc =
+        (SELECT netloc FROM tocrawl GROUP BY netloc ORDER BY RANDOM() LIMIT 1)
+        ORDER BY RANDOM() LIMIT 1)
+        RETURNING url"""
     )
 
     if res := db.fetchone():
@@ -92,10 +96,12 @@ def index_page(url, db, robots):
         if newurl.scheme not in ("https", "http"):
             continue
 
+        netloc = newurl.netloc
         newurl = newurl.geturl()
 
         db.execute(
-            "INSERT INTO tocrawl (url) VALUES (?) ON CONFLICT DO NOTHING", (newurl,)
+            "INSERT INTO tocrawl (url, netloc) VALUES (?, ?) ON CONFLICT DO NOTHING",
+            (newurl, netloc),
         )
 
     titles = html.cssselect("title")
