@@ -3,6 +3,7 @@
 import argparse, sqlite3
 from time import sleep
 from urllib import request, robotparser
+from urllib.error import HTTPError
 from urllib.parse import urlparse
 from lxml.html import fromstring
 
@@ -17,16 +18,28 @@ class RobotCache:
         self.cache = {}
         self.delay = delay
 
+    def download(self, url):
+        robot = robotparser.RobotFileParser()
+        robot.set_url(url._replace(path="/robots.txt", fragment="").geturl())
+
+        try:
+            robot.parse(get(robot.url).read().decode("utf-8").splitlines())
+        except HTTPError as e:
+            if e.code in (401, 403):
+                robot.disallow_all = True
+            else:
+                robot.allow_all = True
+        except:
+            robot.disallow_all = True
+
+        self.cache[url.netloc] = robot
+
     def can_fetch(self, url):
         purl = urlparse(url)
         domain = purl.netloc
 
         if domain not in self.cache:
-            robot = robotparser.RobotFileParser()
-            robot.set_url(purl._replace(path="/robots.txt", fragment="").geturl())
-            robot.url = request.Request(robot.url, headers=headers, unverifiable=True)
-            robot.read()
-            self.cache[domain] = robot
+            self.download(purl)
 
         rb = self.cache[domain]
 
@@ -76,7 +89,7 @@ def index_page(url, db, robots):
     for element in html.cssselect("a"):
         newurl = urlparse(element.attrib.get("href"))._replace(fragment="")
 
-        if newurl.scheme != "https" and newurl.scheme != "http":
+        if newurl.scheme not in ("https", "http"):
             continue
 
         newurl = newurl.geturl()
