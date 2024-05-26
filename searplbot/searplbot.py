@@ -44,6 +44,8 @@ def get(url, timeout=2):
 
 
 def pop_url(db):
+    db.execute("DELETE FROM tocrawl WHERE url IN (SELECT url FROM indexed)")
+
     db.execute(
         "DELETE FROM tocrawl WHERE rowid IN (SELECT rowid FROM tocrawl ORDER BY RANDOM() LIMIT 1) RETURNING url"
     )
@@ -76,10 +78,6 @@ def index_page(url, db, robots):
             continue
 
         newurl = newurl.geturl()
-
-        db.execute("SELECT 1 FROM indexed WHERE url = ?", (newurl,))
-        if db.fetchone():
-            continue
 
         db.execute(
             "INSERT INTO tocrawl (url) VALUES (?) ON CONFLICT DO NOTHING", (newurl,)
