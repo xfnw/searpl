@@ -66,6 +66,7 @@ def index_page(url, db, robots):
         res = get(url)
         if not res.headers.get_content_maintype() == "text":
             return
+        url = res.url  # follow redirects
         html = fromstring(res.read())
         html.make_links_absolute(url)
     except Exception as e:
