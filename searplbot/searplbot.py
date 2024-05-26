@@ -125,12 +125,16 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", help="crawl count", default=0, type=int)
     parser.add_argument("-d", help="crawl delay", default=1, type=float)
+    parser.add_argument("-R", help="purge tocrawl list", action="store_true")
     parser.add_argument("database")
     parser.add_argument("url", nargs="*")
     args = parser.parse_args()
 
     con = sqlite3.connect(args.database)
     cur = con.cursor()
+
+    if args.R:
+        cur.execute("DELETE FROM tocrawl")
 
     robots = RobotCache(delay=args.d)
 
