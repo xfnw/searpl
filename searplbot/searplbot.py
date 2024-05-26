@@ -24,6 +24,7 @@ class RobotCache:
         if domain not in self.cache:
             robot = robotparser.RobotFileParser()
             robot.set_url(purl._replace(path="/robots.txt", fragment="").geturl())
+            robot.url = request.Request(robot.url, headers=headers, unverifiable=True)
             robot.read()
             self.cache[domain] = robot
 
