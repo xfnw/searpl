@@ -45,7 +45,18 @@ def index_page(url, db, robots):
         print("oh no", e)
         return
 
-    for element in html.cssselect("a"):
+    # FIXME: should probably be case-insensitive?
+    if html.xpath(
+        "//meta[(@name = 'robots' or @name = 'searplbot') and (contains(@content, 'noindex') or contains(@content, 'nofollow'))]"
+    ):
+        print("boop beep")
+        return
+
+    # FIXME: clean up pages better, perhaps using readability
+    for element in html.cssselect("script, style, noindex"):
+        element.drop_tree()
+
+    for element in html.xpath("//a[not(@rel and contains(@rel, 'nofollow'))]"):
         newurl = urlparse(element.attrib.get("href"))._replace(fragment="")
 
         if newurl.scheme not in ("https", "http"):
@@ -62,10 +73,6 @@ def index_page(url, db, robots):
     titles = html.cssselect("title")
     if len(titles) == 0:
         return
-
-    # FIXME: clean up pages better, perhaps using readability
-    for element in html.cssselect("script, style"):
-        element.drop_tree()
 
     try:
         title = titles[0].text_content()
