@@ -1,70 +1,13 @@
 #!/usr/bin/env python3
 
-import argparse, sqlite3, re
+import argparse, sqlite3
 from time import sleep
-from urllib import request, robotparser
-from urllib.error import HTTPError
 from urllib.parse import urlparse
 from lxml.html import HTMLParser, fromstring
 
-ua = "searplbot/2.0"
-headers = {"User-Agent": ua}
-
-
-class RobotCache:
-    """shim to make urllib.robotparser.RobotFileParser work with multiple domains"""
-
-    def __init__(self, delay=1):
-        self.cache = {}
-        self.delay = delay
-
-    def download(self, url):
-        robot = robotparser.RobotFileParser()
-        robot.set_url(url._replace(path="/robots.txt", fragment="").geturl())
-
-        try:
-            robot.parse(get(robot.url).read().decode("utf-8").splitlines())
-        except HTTPError as e:
-            if e.code in (401, 403):
-                robot.disallow_all = True
-            else:
-                robot.allow_all = True
-        except:
-            robot.disallow_all = True
-
-        self.cache[url.netloc] = robot
-
-    def can_fetch(self, url):
-        purl = urlparse(url)
-        domain = purl.netloc
-
-        if domain not in self.cache:
-            self.download(purl)
-
-        rb = self.cache[domain]
-
-        # just skip pages that ask for a higher delay than
-        # we are using; no point in waiting around when we
-        # have other sites to crawl
-        if (rb.crawl_delay(ua) or 0) > self.delay:
-            return False
-
-        return rb.can_fetch(ua, url)
-
-
-class MultiReplace:
-    def __init__(self, rep):
-        self.r = {re.escape(k): v for k, v in rep.items()}
-        self.p = re.compile("|".join(self.r.keys()))
-
-    def replace(self, inp):
-        return self.p.sub(lambda x: self.r[x.group(0)], inp)
-
-
-def get(url, timeout=2):
-    req = request.Request(url, headers=headers, unverifiable=True)
-    return request.urlopen(req, timeout=timeout)
-
+from .agent import get, ua
+from .robots import RobotCache
+from .replace import MultiReplace
 
 esc = MultiReplace({"<": "&lt;", ">": "&gt;", "'": "&apos;", '"': "&quot;"}).replace
 
@@ -154,7 +97,7 @@ def main():
     if args.R:
         cur.execute("DELETE FROM tocrawl")
 
-    robots = RobotCache(delay=args.d)
+    robots = RobotCache(ua, delay=args.d)
 
     for url in args.url:
         print("indexing", url)
@@ -162,7 +105,7 @@ def main():
         con.commit()
         sleep(args.d)
 
-    for i in range(args.c):
+    for _ in range(args.c):
         url = pop_url(cur)
         con.commit()
         print("indexing", url)

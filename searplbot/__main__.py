@@ -1,5 +1,4 @@
-from .searplbot import *
+from .searplbot import main
 
 if __name__ == "__main__":
     main()
-
