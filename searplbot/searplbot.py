@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import argparse, sqlite3
+import argparse, sqlite3, re
 from time import sleep
 from urllib import request, robotparser
 from urllib.error import HTTPError
@@ -52,9 +52,21 @@ class RobotCache:
         return rb.can_fetch(ua, url)
 
 
+class MultiReplace:
+    def __init__(self, rep):
+        self.r = {re.escape(k): v for k, v in rep.items()}
+        self.p = re.compile("|".join(self.r.keys()))
+
+    def replace(self, inp):
+        return self.p.sub(lambda x: self.r[x.group(0)], inp)
+
+
 def get(url, timeout=2):
     req = request.Request(url, headers=headers, unverifiable=True)
     return request.urlopen(req, timeout=timeout)
+
+
+esc = MultiReplace({"<": "&lt;", ">": "&gt;", "'": "&apos;", '"': "&quot;"}).replace
 
 
 def pop_url(db):
@@ -123,7 +135,7 @@ def index_page(url, db, robots):
     db.execute("DELETE FROM indexed WHERE url = ?", (url,))
     db.execute(
         "INSERT INTO indexed (title, url, content) VALUES (?, ?, ?)",
-        (title, url, content),
+        (esc(title), esc(url), esc(content)),
     )
 
 
