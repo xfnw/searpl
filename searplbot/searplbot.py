@@ -5,7 +5,7 @@ from time import sleep
 from urllib import request, robotparser
 from urllib.error import HTTPError
 from urllib.parse import urlparse
-from lxml.html import fromstring
+from lxml.html import HTMLParser, fromstring
 
 ua = "searplbot/2.0"
 headers = {"User-Agent": ua}
@@ -107,17 +107,23 @@ def index_page(url, db, robots):
     titles = html.cssselect("title")
     if len(titles) == 0:
         return
-    title = titles[0].text_content()
 
     # FIXME: clean up pages better, perhaps using readability
     for element in html.cssselect("script, style"):
         element.drop_tree()
 
+    try:
+        title = titles[0].text_content()
+        content = html.text_content()
+    except UnicodeDecodeError:
+        print("ut oh")
+        return
+
     print("title:", title)
     db.execute("DELETE FROM indexed WHERE url = ?", (url,))
     db.execute(
         "INSERT INTO indexed (title, url, content) VALUES (?, ?, ?)",
-        (title, url, html.text_content()),
+        (title, url, content),
     )
 
 
