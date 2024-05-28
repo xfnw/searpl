@@ -27,7 +27,7 @@ if (isset($_GET['q']) && preg_replace('/\s+/', '', $_GET['q']) != '') {
 	set_error_handler(function ($_,$_m) {echo "<!-- falling back to bm25 ranking -->\n";}, E_WARNING);
 	$rank = ($db->loadExtension("searplrank.so") ? "searplrank(indexed) desc" : "bm25(indexed,2,2,1)");
 	restore_error_handler();
-	$sql = "SELECT title,url,snippet(indexed,2,'<b>','</b>','...',15) as snippet FROM indexed WHERE indexed MATCH ? ORDER BY ".$rank;
+	$sql = "SELECT title,url,snippet(indexed,2,'<b>','</b>','...',15) as snippet FROM indexed WHERE indexed MATCH ? ORDER BY ".$rank." LIMIT 1000";
 	
 	$stmt = $db->prepare($sql);
 	$stmt->bindValue(1, $_GET['q']);
