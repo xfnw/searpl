@@ -4,6 +4,7 @@
 *.so
 *.pyc
 *-wal
+*-shm
 *-journal
 __pycache__
 
