@@ -4,6 +4,7 @@ import argparse, sqlite3
 from time import sleep
 from urllib.parse import urlparse
 from lxml.html import HTMLParser, fromstring
+from lxml.etree import iterwalk
 
 from .agent import get, ua
 from .robots import RobotCache
@@ -27,6 +28,16 @@ def pop_url(db):
         return res[0]
 
     raise Exception("no more urls")
+
+
+def squish_text(inp):
+    res = []
+    for ev, e in iterwalk(inp, events=("start", "end")):
+        if ev == "start" and e.text and (s := e.text.strip()):
+            res.append(s)
+        elif ev == "end" and e.tail and (s := e.tail.strip()):
+            res.append(s)
+    return " ".join(res)
 
 
 def index_page(url, db, robots):
@@ -76,8 +87,8 @@ def index_page(url, db, robots):
         return
 
     try:
-        title = titles[0].text_content()
-        content = html.text_content()
+        title = squish_text(titles[0])
+        content = squish_text(html)
     except UnicodeDecodeError:
         print("ut oh")
         return
