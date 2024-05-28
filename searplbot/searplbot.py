@@ -41,6 +41,8 @@ def squish_text(inp):
 
 
 def index_page(url, db, robots):
+    db.execute("DELETE FROM indexed WHERE url = ?", (url,))
+
     if not robots.can_fetch(url):
         print("beep boop")
         return
