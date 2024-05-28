@@ -17,7 +17,9 @@ class RobotCache:
 
     def download(self, url):
         robot = RobotFileParser()
-        robot.set_url(url._replace(path="/robots.txt", fragment="").geturl())
+        robot.set_url(
+            url._replace(path="/robots.txt", params="", query="", fragment="").geturl()
+        )
 
         try:
             robot.parse(get(robot.url).read().decode("utf-8").splitlines())
