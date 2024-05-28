@@ -105,6 +105,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", help="crawl count", default=0, type=int)
     parser.add_argument("-d", help="crawl delay", default=1, type=float)
+    parser.add_argument("-f", help="use urls from file")
     parser.add_argument("-R", help="purge tocrawl list", action="store_true")
     parser.add_argument("database")
     parser.add_argument("url", nargs="*")
@@ -115,6 +116,10 @@ def main():
 
     if args.R:
         cur.execute("DELETE FROM tocrawl")
+
+    if args.f:
+        with open(args.f, "r") as f:
+            args.url += f.read().splitlines()
 
     robots = RobotCache(ua, delay=args.d)
 
