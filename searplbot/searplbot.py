@@ -39,7 +39,8 @@ def index_page(url, db, robots):
         if not res.headers.get_content_maintype() == "text":
             return
         url = res.url  # follow redirects
-        html = fromstring(res.read())
+        parser = HTMLParser(remove_blank_text=True)
+        html = fromstring(res.read(), parser=parser)
         html.make_links_absolute(url)
     except Exception as e:
         print("oh no", e)
