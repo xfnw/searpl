@@ -54,6 +54,7 @@ def index_page(url, db, robots):
         url = res.url  # follow redirects
         parser = HTMLParser(remove_blank_text=True, encoding="utf-8")
         html = fromstring(res.read(), parser=parser)
+        html.text_content()
         html.make_links_absolute(url)
     except Exception as e:
         print("oh no", e)
@@ -90,12 +91,8 @@ def index_page(url, db, robots):
     if len(titles) == 0:
         return
 
-    try:
-        title = squish_text(titles[0])
-        content = squish_text(html)
-    except UnicodeDecodeError:
-        print("ut oh")
-        return
+    title = squish_text(titles[0])
+    content = squish_text(html)
 
     print("title:", title)
     db.execute("DELETE FROM indexed WHERE url = ?", (url,))

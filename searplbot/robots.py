@@ -28,7 +28,7 @@ class RobotCache:
                 robot.disallow_all = True
             else:
                 robot.allow_all = True
-        except:
+        except Exception:
             robot.disallow_all = True
 
         self.cache[url.netloc] = robot
