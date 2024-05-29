@@ -14,7 +14,7 @@ esc = MultiReplace({"<": "&lt;", ">": "&gt;", "'": "&apos;", '"': "&quot;"}).rep
 
 
 def pop_url(db):
-    db.execute("DELETE FROM tocrawl WHERE url IN (SELECT url FROM indexed)")
+    db.execute("DELETE FROM tocrawl WHERE url IN (SELECT url FROM indexed WHERE content != '')")
 
     db.execute(
         """DELETE FROM tocrawl WHERE rowid IN
