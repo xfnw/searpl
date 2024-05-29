@@ -75,6 +75,8 @@ def index_page(url, db, robots):
 
         if newurl.scheme not in ("https", "http"):
             continue
+        if newurl.path == "/":
+            newurl = newurl._replace(path="")
 
         netloc = newurl.netloc
         newurl = newurl.geturl()
