@@ -1,6 +1,7 @@
 from urllib.robotparser import RobotFileParser
 from urllib.error import HTTPError
 from urllib.parse import urlparse
+from time import time
 
 from .agent import get
 
@@ -10,9 +11,9 @@ class RobotCache:
 
     from .searplbot import get
 
-    def __init__(self, ua, delay=1):
+    def __init__(self, ua):
         self.cache = {}
-        self.delay = delay
+        self.last = {}
         self.ua = ua
 
     def download(self, url):
@@ -32,6 +33,7 @@ class RobotCache:
             robot.disallow_all = True
 
         self.cache[url.netloc] = robot
+        self.last[url.netloc] = 0
 
     def can_fetch(self, url):
         purl = urlparse(url)
@@ -42,10 +44,9 @@ class RobotCache:
 
         rb = self.cache[domain]
 
-        # just skip pages that ask for a higher delay than
-        # we are using; no point in waiting around when we
-        # have other sites to crawl
-        if (rb.crawl_delay(self.ua) or 0) > self.delay:
+        now = time()
+        if (rb.crawl_delay(self.ua) or 0) + self.last[domain] > now:
             return False
+        self.last[domain] = now
 
         return rb.can_fetch(self.ua, url)
