@@ -40,3 +40,11 @@ python3 -m searplbot db.sqlite [some url]
 the -c flag can be used to enable crawling and specify how many
 connections to make before exiting
 
+## optimization
+in addition to the normal sqlite stuff like `VACUUM`, to improve
+performance for searches using common words you'll periodically
+want to tell FTS5 to optimize
+```
+INSERT INTO indexed(indexed) VALUES ('optimize');
+```
+
