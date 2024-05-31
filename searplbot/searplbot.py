@@ -69,6 +69,11 @@ def index_page(url, db, robots):
         print("boop beep")
         return
 
+    url = urlparse(url)
+    if url.path == "/":
+        url = url._replace(path="")
+    url = url.geturl()
+
     # FIXME: clean up pages better, perhaps using readability
     for element in html.cssselect("script, style, noindex"):
         element.drop_tree()
