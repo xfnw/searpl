@@ -2,6 +2,7 @@
 body {
 background: #141415;
 font-family: 'Liberation Mono', monospace;
+word-wrap: break-word;
 color: #cdcdcd;
 }
 
