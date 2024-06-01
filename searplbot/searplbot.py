@@ -97,8 +97,9 @@ def index_page(url, db, robots):
     titles = html.cssselect("title")
     if len(titles) == 0:
         return
-
     title = squish_text(titles[0])
+    if not title:
+        return
     content = squish_text(html)
 
     print("title:", title)
