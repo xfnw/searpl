@@ -72,7 +72,7 @@ def index_page(url, db, robots):
     url = urlparse(url)
     if url.path == "/":
         url = url._replace(path="")
-    url = url.geturl()
+    url = url._replace(fragment="").geturl()
 
     # FIXME: clean up pages better, perhaps using readability
     for element in html.cssselect("script, style, noindex"):
