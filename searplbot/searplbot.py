@@ -27,7 +27,9 @@ def pop_url(db):
     )
 
     if res := db.fetchone():
-        return res[0]
+        url = res[0]
+        db.execute("DELETE FROM indexed WHERE url = ?", (url,))
+        return url
 
     raise Exception("no more urls")
 
@@ -43,8 +45,6 @@ def squish_text(inp):
 
 
 def index_page(url, db, robots):
-    db.execute("DELETE FROM indexed WHERE url = ?", (url,))
-
     if not robots.can_fetch(url):
         print("beep boop")
         return
@@ -133,6 +133,8 @@ def main():
     robots = RobotCache(ua)
 
     for url in args.url:
+        cur.execute("DELETE FROM indexed WHERE url = ?", (url,))
+        con.commit()
         print("indexing", url)
         index_page(url, cur, robots)
         con.commit()
