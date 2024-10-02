@@ -51,7 +51,10 @@ def index_page(url, db, robots):
 
     try:
         res = get(url)
-        if not res.headers.get_content_maintype() == "text":
+        if (
+            res.headers.get_content_maintype() != "text"
+            and res.headers.get_content_type() != "application/xhtml+xml"
+        ):
             return
         url = res.url  # follow redirects
         parser = HTMLParser(remove_blank_text=True, encoding="utf-8")
