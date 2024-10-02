@@ -23,7 +23,7 @@ class RobotCache:
         )
 
         try:
-            robot.parse(get(robot.url).read().decode("utf-8").splitlines())
+            robot.parse(get(robot.url).read(2097152).decode("utf-8").splitlines())
         except HTTPError as e:
             if e.code in (401, 403):
                 robot.disallow_all = True

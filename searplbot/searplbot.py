@@ -55,7 +55,7 @@ def index_page(url, db, robots):
             return
         url = res.url  # follow redirects
         parser = HTMLParser(remove_blank_text=True, encoding="utf-8")
-        html = fromstring(res.read(), parser=parser)
+        html = fromstring(res.read(2097152), parser=parser)
         html.text_content()
         html.make_links_absolute(url)
     except Exception as e:
