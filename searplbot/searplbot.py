@@ -81,6 +81,7 @@ def index_page(url, db, robots):
     for element in html.cssselect("script, style, noindex"):
         element.drop_tree()
 
+    urls = []
     for element in html.xpath("//a[not(@rel and contains(@rel, 'nofollow'))]"):
         newurl = urlparse(element.attrib.get("href"))._replace(fragment="")
 
@@ -92,10 +93,7 @@ def index_page(url, db, robots):
         netloc = newurl.netloc
         newurl = newurl.geturl()
 
-        db.execute(
-            "INSERT INTO tocrawl (url, netloc) VALUES (?, ?) ON CONFLICT DO NOTHING",
-            (newurl, netloc),
-        )
+        urls.append((newurl, netloc))
 
     titles = html.cssselect("title")
     if len(titles) == 0:
@@ -106,6 +104,10 @@ def index_page(url, db, robots):
     content = squish_text(html)
 
     print("title:", title)
+    db.executemany(
+        "INSERT INTO tocrawl (url, netloc) VALUES (?, ?) ON CONFLICT DO NOTHING",
+        urls,
+    )
     db.execute("DELETE FROM indexed WHERE url = ?", (url,))
     db.execute(
         "INSERT INTO indexed (title, url, content) VALUES (?, ?, ?)",
