@@ -3,6 +3,7 @@
 import argparse, sqlite3
 from time import sleep
 from urllib.parse import urlparse
+from publicsuffix2 import get_sld
 from lxml.html import HTMLParser, fromstring
 from lxml.etree import iterwalk
 
@@ -90,7 +91,7 @@ def index_page(url, db, robots):
         if newurl.path == "/":
             newurl = newurl._replace(path="")
 
-        netloc = newurl.netloc
+        netloc = get_sld(newurl.netloc.split("@")[-1].split(":")[0])
         newurl = newurl.geturl()
 
         urls.append((newurl, netloc))
