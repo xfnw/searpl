@@ -55,15 +55,14 @@ int sqlite3_searplrank_init(sqlite3 *db, char **err,
 	SQLITE_EXTENSION_INIT2(pApi);
 
 	fts5_api *fApi = 0;
-	{
-		sqlite3_stmt *stmt = 0;
-		if (SQLITE_OK !=
-		    sqlite3_prepare(db, "SELECT fts5(?1)", -1, &stmt, 0))
-			return -1;
-		sqlite3_bind_pointer(stmt, 1, &fApi, "fts5_api_ptr", 0);
-		sqlite3_step(stmt);
-		sqlite3_finalize(stmt);
-	}
+	sqlite3_stmt *stmt = 0;
+
+	if (SQLITE_OK != sqlite3_prepare(db, "SELECT fts5(?1)", -1, &stmt, 0))
+		return -1;
+
+	sqlite3_bind_pointer(stmt, 1, &fApi, "fts5_api_ptr", 0);
+	sqlite3_step(stmt);
+	sqlite3_finalize(stmt);
 
 	return (fApi->xCreateFunction(fApi, "searplrank", 0, custom_rank, 0));
 }
