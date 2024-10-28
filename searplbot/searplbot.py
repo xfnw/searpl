@@ -93,6 +93,9 @@ def index_page(url, db, robots):
         netloc = get_sld(newurl.netloc.split("@")[-1].split(":")[0])
         newurl = newurl.geturl()
 
+        if netloc is None:
+            continue
+
         urls.append((newurl, netloc))
 
     titles = html.cssselect("title")
