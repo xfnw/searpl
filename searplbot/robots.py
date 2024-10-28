@@ -9,8 +9,6 @@ from .agent import get
 class RobotCache:
     """shim to make RobotFileParser work with multiple domains"""
 
-    from .searplbot import get
-
     def __init__(self, ua):
         self.cache = {}
         self.last = {}
