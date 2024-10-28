@@ -46,12 +46,11 @@ def squish_text(inp):
 
 
 def index_page(url, db, robots):
-    if not robots.can_fetch(url):
-        print("beep boop")
-        return
-
     try:
-        res = get(url)
+        res = get(url, robots=robots)
+        if res is None:
+            print("beep boop")
+            return
         if (
             res.headers.get_content_maintype() != "text"
             and res.headers.get_content_type() != "application/xhtml+xml"
