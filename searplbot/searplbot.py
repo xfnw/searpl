@@ -99,11 +99,11 @@ def index_page(url, db, robots):
         urls.append((newurl, netloc))
 
     titles = html.cssselect("title")
-    if len(titles) == 0:
-        return
-    title = squish_text(titles[0])
+    title = None
+    if len(titles) != 0:
+        title = squish_text(titles[0])
     if not title:
-        return
+        title = url
     content = squish_text(html)
 
     print("title:", title)
