@@ -27,7 +27,7 @@ if (isset($_GET['q']) && preg_replace('/\s+/', '', $_GET['q']) != '') {
 	set_error_handler(function ($_,$_m) {echo "<!-- falling back to bm25 ranking -->\n";}, E_WARNING);
 	$rank = ($db->loadExtension("searplrank.so") ? "searplrank(indexed) desc" : "bm25(indexed,2,2,1)");
 	restore_error_handler();
-	$sql = "SELECT title,url,snippet(indexed,2,'<b>','</b>','...',15) as snippet FROM indexed WHERE indexed MATCH ? ORDER BY ".$rank." LIMIT 1000";
+	$sql = "SELECT title,url,snippet(indexed,2,'','','...',15) as snippet FROM indexed WHERE indexed MATCH ? ORDER BY ".$rank." LIMIT 1000";
 	
 	$stmt = $db->prepare($sql);
 	$stmt->bindValue(1, $_GET['q']);
@@ -42,12 +42,12 @@ if (isset($_GET['q']) && preg_replace('/\s+/', '', $_GET['q']) != '') {
 ?>
 
 <div class='box'>
-<a href="<?php echo $row['url']; ?>"><?php echo $row['title']; ?></a>
+<a href="<?php echo htmlspecialchars($row['url'], ENT_QUOTES); ?>"><?php echo htmlspecialchars($row['title']); ?></a>
 <br>
-<small><?php echo $row['url']; ?></small>
+<small><?php echo htmlspecialchars($row['url']); ?></small>
 <br>
 <?php
-		echo $row['snippet'];
+		echo htmlspecialchars($row['snippet']);
 ?>
 </div>
 <?php

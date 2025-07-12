@@ -11,8 +11,6 @@ from .agent import get, ua
 from .robots import RobotCache
 from .replace import MultiReplace
 
-esc = MultiReplace({"<": "&lt;", ">": "&gt;", "'": "&apos;", '"': "&quot;"}).replace
-
 
 def pop_url(db):
     db.execute(
@@ -114,7 +112,7 @@ def index_page(url, db, robots):
     db.execute("DELETE FROM indexed WHERE url = ?", (url,))
     db.execute(
         "INSERT INTO indexed (title, url, content) VALUES (?, ?, ?)",
-        (esc(title), esc(url), esc(content)),
+        (title, url, content),
     )
 
 

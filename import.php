@@ -18,7 +18,7 @@ while ($row = $inp->fetchArray()) {
 	[$title, $url, $content] = $row;
 
 	$stmt = $db->prepare('DELETE FROM indexed WHERE url = ?');
-	$stmt->bindValue(1, htmlspecialchars(htmlspecialchars_decode($url)));
+	$stmt->bindValue(1, $url);
 	$stmt->execute();
 
 	$document = preg_replace('/[ \t]+/', ' ', preg_replace('/[\r\n]+/', " ", strip_tags(preg_replace('/<(script|style)[^>]*>(.*)<\/\1>/siU', ' ',$content))));
@@ -26,8 +26,8 @@ while ($row = $inp->fetchArray()) {
 	echo "title: ".$title."\n";
 
 	$stmt = $db->prepare('INSERT INTO indexed (title, url, content) VALUES (?, ?, ?)');
-	$stmt->bindValue(1, htmlspecialchars(str_replace('&mdash;','—',htmlspecialchars_decode($title))));
-	$stmt->bindValue(2, htmlspecialchars(str_replace('&mdash;','—',htmlspecialchars_decode($url))));
-	$stmt->bindValue(3, htmlspecialchars(str_replace('&mdash;','—',htmlspecialchars_decode($document))));
+	$stmt->bindValue(1, $title);
+	$stmt->bindValue(2, $url);
+	$stmt->bindValue(3, $document);
 	$stmt->execute();
 }
