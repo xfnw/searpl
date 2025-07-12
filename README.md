@@ -48,3 +48,8 @@ want to tell FTS5 to optimize
 INSERT INTO indexed(indexed) VALUES ('optimize');
 ```
 
+## clearing duplicates
+searpl will accumulate duplicate pages over time, to clear them:
+```
+DELETE FROM indexed WHERE rowid NOT IN (SELECT max(rowid) FROM indexed GROUP BY url);
+```
