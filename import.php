@@ -22,8 +22,8 @@ while ($row = $inp->fetchArray()) {
 	echo "title: ".$title."\n";
 
 	$stmt = $db->prepare('INSERT INTO indexed (title, url, content) VALUES (?, ?, ?)');
-	$stmt->bindValue(1, $title);
-	$stmt->bindValue(2, $url);
-	$stmt->bindValue(3, $document);
+	$stmt->bindValue(1, str_replace('&mdash;','—',htmlspecialchars_decode($title)));
+	$stmt->bindValue(2, str_replace('&mdash;','—',htmlspecialchars_decode($url)));
+	$stmt->bindValue(3, str_replace('&mdash;','—',htmlspecialchars_decode($document)));
 	$stmt->execute();
 }
