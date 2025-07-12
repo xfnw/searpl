@@ -9,7 +9,7 @@ searpl is a small php search engine with the following features:
 - [x] read-only database, nothing is written except with the shell
 
 ## licensing
-searpl is licensed under an MIT licence, see [LICENSE](LICENSE)
+searpl is licensed under an MIT license, see [LICENSE](LICENSE)
 for more information
 
 ## setup
