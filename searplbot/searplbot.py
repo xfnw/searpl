@@ -26,9 +26,7 @@ def pop_url(db):
     )
 
     if res := db.fetchone():
-        url = res[0]
-        db.execute("DELETE FROM indexed WHERE url = ?", (url,))
-        return url
+        return res[0]
 
     raise Exception("no more urls")
 
@@ -109,7 +107,6 @@ def index_page(url, db, robots):
         "INSERT INTO tocrawl (url, netloc) VALUES (?, ?) ON CONFLICT DO NOTHING",
         urls,
     )
-    db.execute("DELETE FROM indexed WHERE url = ?", (url,))
     db.execute(
         "INSERT INTO indexed (title, url, content) VALUES (?, ?, ?)",
         (title, url, content),
@@ -139,8 +136,6 @@ def main():
     robots = RobotCache(ua)
 
     for url in args.url:
-        cur.execute("DELETE FROM indexed WHERE url = ?", (url,))
-        con.commit()
         print("indexing", url)
         index_page(url, cur, robots)
         con.commit()

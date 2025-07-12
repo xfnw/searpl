@@ -17,10 +17,6 @@ $inp = $dbin->query('SELECT title,url,content FROM '.$fromtable);
 while ($row = $inp->fetchArray()) {
 	[$title, $url, $content] = $row;
 
-	$stmt = $db->prepare('DELETE FROM indexed WHERE url = ?');
-	$stmt->bindValue(1, $url);
-	$stmt->execute();
-
 	$document = preg_replace('/[ \t]+/', ' ', preg_replace('/[\r\n]+/', " ", strip_tags(preg_replace('/<(script|style)[^>]*>(.*)<\/\1>/siU', ' ',$content))));
 
 	echo "title: ".$title."\n";
